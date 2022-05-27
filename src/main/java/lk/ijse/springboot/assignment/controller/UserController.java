@@ -19,35 +19,46 @@ public class UserController {
     private UserService userService;
 
     @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE , consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity saveUser(@RequestBody UserDTO userDTO){
+    public ResponseEntity<Boolean> saveUser(@RequestBody UserDTO userDTO){
 
         try{
-            userService.saveUser(userDTO);
-            return new ResponseEntity(HttpStatus.CREATED);
+            boolean b = userService.saveUser(userDTO);
+            return new ResponseEntity<>(b,HttpStatus.CREATED);
         }catch (Exception e){
             throw new RuntimeException();
         }
     }
 
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public @ResponseBody List<User> getAllUsers(){
+    public ResponseEntity getAllUsers(){
         try{
-            return userService.getAllUsers();
+            List<UserDTO> allUsers = userService.getAllUsers();
+            return new ResponseEntity(allUsers,HttpStatus.OK);
         }catch (Exception e){
             throw new RuntimeException();
         }
 
     }
 
-    @GetMapping(path = "/{userName}/{password}",produces = MediaType.APPLICATION_JSON_VALUE)
-    public @ResponseBody UserDTO getUserByUserNameAndPassword(@PathVariable String userName,@PathVariable String password){
+    @GetMapping(path = "/{userName}",produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity getAllUserByUserName(@PathVariable String userName){
         try{
-            UserDTO user = userService.findByUserNameAndPassword(userName, password);
-            return user;
+            List<UserDTO> users = userService.findAllByUserName(userName);
+            return new ResponseEntity(users,HttpStatus.OK);
         }catch (Exception e){
             throw new RuntimeException();
         }
     }
+
+//    @GetMapping(path = "/{userName}/{password}",produces = MediaType.APPLICATION_JSON_VALUE)
+//    public ResponseEntity getUserByUserNameAndPassword(@PathVariable String userName,@PathVariable String password){
+//        try{
+//            UserDTO user = userService.findByUserNameAndPassword(userName, password);
+//            return new ResponseEntity(user,HttpStatus.OK);
+//        }catch (Exception e){
+//            throw new RuntimeException();
+//        }
+//    }
 
 //    @GetMapping(path = "/find", produces = MediaType.APPLICATION_JSON_VALUE)
 //    public @ResponseBody UserDTO getUser(@RequestBody UserDTO userDTO){
